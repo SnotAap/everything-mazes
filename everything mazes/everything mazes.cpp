@@ -8,7 +8,7 @@ std::pair<cordinates, cordinates> startAndEndCords;
 std::vector<cordinates> path;
 int sizeX = 20;
 int sizeY = 20;
-bool doesThisWork = false;
+
 
 int main()
 {
@@ -58,4 +58,3 @@ int main()
 //https://www.youtube.com/watch?v=GC-nBgi9r0U
 //https://www.youtube.com/watch?v=oCvb-Q5lXb8
 
-//eyo is this working?
