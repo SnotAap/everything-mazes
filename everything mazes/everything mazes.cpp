@@ -51,10 +51,6 @@ int main()
     return 0;
 }
 
-//https://en.wikipedia.org/wiki/Maze_generation_algorithm
-//https://stackoverflow.com/questions/13031462/difference-and-advantages-between-dijkstra-a-star
-//https://en.wikipedia.org/wiki/Admissible_heuristic
-//https://en.wikipedia.org/wiki/A*_search_algorithm
-//https://www.youtube.com/watch?v=GC-nBgi9r0U
-//https://www.youtube.com/watch?v=oCvb-Q5lXb8
+
+
 
