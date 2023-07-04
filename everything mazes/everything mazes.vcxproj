@@ -162,6 +162,9 @@
     <ClInclude Include="Tile.h" />
     <ClInclude Include="Wall.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Sources.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
