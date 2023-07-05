@@ -18,7 +18,7 @@ int main()
     sf::RenderWindow window(sf::VideoMode(1920, 1080), "Mazes!");
     gridSetup(sizeX, sizeY, renderList, tileMap, wallMap, expressedwallMap);
     startAndEndCords = generateMaze(sizeX, sizeY, wallMap, tileMap);
-    path = Astar(sizeX, sizeY, wallMap, startAndEndCords.first, startAndEndCords.second);
+    
     for (int i = 0; i < expressedwallMap.size(); i++)
     {
         for (int j = 0; j < 4; j++)
