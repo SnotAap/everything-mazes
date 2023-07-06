@@ -70,10 +70,17 @@ void gridSetup(int sizeX, int sizeY, std::vector<std::shared_ptr<Object>>& rende
 			}
 			//
 			expressedwallMap.emplace_back(myCords);
-			cordinates nextXCords = std::pair<int, int>(std::make_pair(x + 1, y));
-			cordinates nextYCords = std::pair<int, int>(std::make_pair(x, y + 1));
-			eastNeighbor = tileMap[nextXCords];
-			southNeighbor = tileMap[nextYCords];
+			if (x < sizeX - 1)
+			{
+				cordinates nextXCords = std::pair<int, int>(std::make_pair(x + 1, y));
+				eastNeighbor = tileMap[nextXCords];
+			}
+			if (y < sizeY - 1)
+			{
+				cordinates nextYCords = std::pair<int, int>(std::make_pair(x, y + 1));
+				southNeighbor = tileMap[nextYCords];
+			}	
+			
 			//
 			std::shared_ptr<Tile> myneighbors[4] = {northNeighbor, eastNeighbor, southNeighbor, westNeighbor };
 			for (int i = 0; i < 4; i++)
@@ -84,7 +91,7 @@ void gridSetup(int sizeX, int sizeY, std::vector<std::shared_ptr<Object>>& rende
 	}
 }
 
-std::pair<cordinates, cordinates> generateMaze(int sizeX, int sizeY, std::map<cordinates, walls>& wallMap, std::map<cordinates, std::shared_ptr<Tile>>& tileMap)
+std::pair<cordinates, cordinates> recursiveBacktrackingMaze(int sizeX, int sizeY, std::map<cordinates, walls>& wallMap, std::map<cordinates, std::shared_ptr<Tile>>& tileMap)
 {
 	std::list<cordinates> exploredTiles;
 	//
@@ -141,11 +148,162 @@ std::pair<cordinates, cordinates> generateMaze(int sizeX, int sizeY, std::map<co
 			if (currentTile != exploredTiles.begin())
 			{
 				currentTile--;
+
 			}
 			else break;
 		}
 		
 	}
+	int yOpeningEnd = rand() % sizeY;
+	cordinates openingEnd = std::pair<int, int>(std::make_pair(sizeX - 1, yOpeningEnd));
+	wallMap[openingEnd][East]->active = false;
+	return std::pair<cordinates, cordinates>(std::make_pair(opening, openingEnd));
+}
+
+class MazeNode
+{
+public:
+	cordinates position;
+
+	bool partOfMaze = false;
+	bool partOfFrontier = false;
+	std::shared_ptr<MazeNode> neighbors[4];
+
+	MazeNode(int xPos, int yPos)
+	{
+		position = std::pair<int, int>(std::make_pair(xPos, yPos));
+	}
+
+	int getSide(std::shared_ptr<MazeNode> neighbor)
+	{
+			int side = -1;
+			if (position.first > neighbor->position.first)
+			{
+				side = East;
+			}
+			if (position.first < neighbor->position.first)
+			{
+				side = West;
+			}
+			if (position.second < neighbor->position.second)
+			{
+				side = North;
+			}
+			if (position.second > neighbor->position.second)
+			{
+				side = South;
+			}
+			return side;
+	}
+};
+
+std::pair<cordinates, cordinates> primsMaze(int sizeX, int sizeY, std::map<cordinates, walls>& wallMap, std::map<cordinates, std::shared_ptr<Tile>>& tileMap)
+{
+	std::vector<cordinates> maze;
+	std::vector<cordinates> frontier;
+	std::map<cordinates, std::shared_ptr<MazeNode>> nodeMap;
+	//initializing nodes.
+	for (int x = 0; x < sizeX; x++)
+	{
+		for (int y = 0; y < sizeY; y++)
+		{
+			cordinates Cords = std::pair<int, int>(std::make_pair(x, y));			
+			std::shared_ptr<MazeNode> mazeNodePtr = std::make_shared<MazeNode>(x, y);
+			nodeMap[Cords] = mazeNodePtr;
+		}
+	}
+	//setting up neighbors.
+	for (int x = 0; x < sizeX; x++)
+	{
+		for (int y = 0; y < sizeY; y++)
+		{
+			cordinates myCords = std::pair<int, int>(std::make_pair(x, y));
+			std::shared_ptr<MazeNode> northNeighbor;
+			std::shared_ptr<MazeNode> eastNeighbor;
+			std::shared_ptr<MazeNode> southNeighbor;
+			std::shared_ptr<MazeNode> westNeighbor;
+			//
+			if (x > 0)
+			{
+				cordinates prevXCords = std::pair<int, int>(std::make_pair(x - 1, y));
+				westNeighbor = nodeMap[prevXCords];
+			}
+			if (y > 0)
+			{
+				cordinates prevYCords = std::pair<int, int>(std::make_pair(x, y - 1));				
+				northNeighbor = nodeMap[prevYCords];
+			}
+			if (x < sizeX - 1)
+			{
+				cordinates nextXCords = std::pair<int, int>(std::make_pair(x + 1, y));
+				eastNeighbor = nodeMap[nextXCords];
+			}
+			if (y < sizeY - 1)
+			{
+				cordinates nextYCords = std::pair<int, int>(std::make_pair(x, y + 1));
+				southNeighbor = nodeMap[nextYCords];
+			}
+			//
+			std::shared_ptr<MazeNode> myneighbors[4] = { northNeighbor, eastNeighbor, southNeighbor, westNeighbor };
+			for (int i = 0; i < 4; i++)
+			{
+				nodeMap[myCords]->neighbors[i] = myneighbors[i];
+			}
+		}
+	}
+	//setting up random starting point
+	int randX = rand() % sizeX;
+	int randY = rand() % sizeY;
+	cordinates randStartCord = std::pair<int, int>(std::make_pair(randX, randY));
+	maze.emplace_back(randStartCord);
+	nodeMap[maze[0]]->partOfMaze = true;
+	//
+	int count = 0;
+	//
+	while (maze.size() < (sizeX * sizeY))
+	{
+		//updating frontier
+		for (int i = 0; i < 4; i++)
+		{
+			if (nodeMap[maze[count]]->neighbors[i] != nullptr)
+			{
+				if (!nodeMap[maze[count]]->neighbors[i]->partOfFrontier && !nodeMap[maze[count]]->neighbors[i]->partOfMaze)
+				{
+					cordinates neighborPosition = nodeMap[maze[count]]->neighbors[i]->position;
+					frontier.emplace_back(neighborPosition);
+					nodeMap[neighborPosition]->partOfFrontier = true;
+				}
+			}
+		}
+		int randFront = rand() % frontier.size();
+		std::vector<cordinates> adjecentMazeTiles;
+		//getting maze neighbors of rand Frontier point
+		for (int i = 0; i < 4; i++)
+		{
+			
+			if (nodeMap[frontier[randFront]]->neighbors[i] != nullptr)
+			{
+				cordinates neighborCords = nodeMap[frontier[randFront]]->neighbors[i]->position;
+				if (nodeMap[neighborCords]->partOfMaze)
+				{
+					adjecentMazeTiles.emplace_back(neighborCords);
+				}
+			}
+		}
+		//choosing random maze neighbor to carve path.
+		int randAdjecentMazeTile = rand() % adjecentMazeTiles.size();
+		nodeMap[frontier[randFront]]->partOfFrontier = false;
+		nodeMap[frontier[randFront]]->partOfMaze = true;
+		maze.emplace_back(frontier[randFront]);
+		
+		wallMap[frontier[randFront]][nodeMap[adjecentMazeTiles[randAdjecentMazeTile]]->getSide(nodeMap[frontier[randFront]])]->active = false;
+		frontier.erase(frontier.begin() + randFront);
+		//
+		count++;
+	}
+	int yOpening = rand() % sizeY;
+	cordinates opening = std::pair<int, int>(std::make_pair(0, yOpening));
+	wallMap[opening][West]->active = false;
 	int yOpeningEnd = rand() % sizeY;
 	cordinates openingEnd = std::pair<int, int>(std::make_pair(sizeX - 1, yOpeningEnd));
 	wallMap[openingEnd][East]->active = false;
