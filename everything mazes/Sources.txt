@@ -10,3 +10,5 @@ https://www.youtube.com/watch?v=oCvb-Q5lXb8
 https://stackoverflow.com/questions/14692818/maze-algorithm-that-generates-the-most-difficult-mazes
 https://joeiddon.github.io/projects/javascript/maze_generation.html
 https://weblog.jamisbuck.org/2011/1/10/maze-generation-prim-s-algorithm
+https://weblog.jamisbuck.org/2011/2/7/maze-generation-algorithm-recap
+https://weblog.jamisbuck.org/2010/12/27/maze-generation-recursive-backtracking
