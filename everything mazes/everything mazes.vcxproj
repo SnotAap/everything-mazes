@@ -144,20 +144,22 @@
   <ItemGroup>
     <ClCompile Include="CustomTypes.cpp" />
     <ClCompile Include="everything mazes.cpp" />
-    <ClCompile Include="GridSetup.cpp" />
+    <ClCompile Include="Grid.cpp" />
     <ClCompile Include="Line.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="PathFinding.cpp" />
+    <ClCompile Include="Robot.cpp" />
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="Wall.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CustomTypes.h" />
-    <ClInclude Include="GridSetup.h" />
+    <ClInclude Include="Grid.h" />
     <ClInclude Include="Header.h" />
     <ClInclude Include="Line.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="PathFinding.h" />
+    <ClInclude Include="Robot.h" />
     <ClInclude Include="Structs.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="Wall.h" />
