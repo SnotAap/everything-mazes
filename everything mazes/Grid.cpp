@@ -4,6 +4,9 @@ Grid::Grid(int sizeX_, int sizeY_)
 {
 	sizeX = sizeX_;
 	sizeY = sizeY_;
+
+	timerTime = 2.0f;
+	timer = timerTime;
 }
 
 void Grid::setup(std::vector<std::shared_ptr<Object>>& renderList)
@@ -122,7 +125,6 @@ void Grid::recursiveBacktrackingMaze()
 	//
 	while (true)
 	{
-
 
 		std::vector<int> possibleDirections;
 		std::vector<cordinates> possibleMoves;
@@ -338,6 +340,7 @@ void Grid::primsMaze()
 
 bool Grid::removeWalls(int deltaTime)
 {
+	
 	if (wallRemoveItorater < removedWallsOrderd.size())
 	{
 		timer -= deltaTime;

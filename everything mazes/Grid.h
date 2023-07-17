@@ -10,8 +10,8 @@ public:
 	std::vector <std::pair<cordinates, int>> removedWallsOrderd;
 	std::pair<cordinates, cordinates> startAndEndCords;
 
-    #define timerTime 10
-	int timer = timerTime;
+    float timerTime;
+	float timer;
 	int wallRemoveItorater = 0;
 
 	Grid(int sizeX_, int sizeY_);
