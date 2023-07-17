@@ -15,7 +15,9 @@ public:
 	bool moving = false;
 	int movingDirection;
 
+	BaseRobot();
 	BaseRobot(Grid grid);
+
 	void updateAccesiblity(Grid grid);
 	
 	void setFuturePosition();
@@ -25,7 +27,8 @@ public:
 	bool moveWest(int deltaTime);
 	bool move(int deltaTime);
 
-	void randomMovement(Grid grid, int deltaTime);
+	virtual void movement(Grid grid, int deltaTime);
 
 	virtual void draw(sf::RenderWindow* window) override;
 };
+

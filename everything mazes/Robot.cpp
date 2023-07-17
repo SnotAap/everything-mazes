@@ -1,5 +1,11 @@
 #include "Header.h"
 
+BaseRobot::BaseRobot()
+{
+	tileSize = -1;
+	movingDirection = -1;
+}
+
 BaseRobot::BaseRobot(Grid grid)
 {
 	tileSize = grid.tileMap[grid.startAndEndCords.first]->size.x;
@@ -10,7 +16,7 @@ BaseRobot::BaseRobot(Grid grid)
 	position = gridOffset;
 	shape.setPosition(position);	
 	gridPos = grid.startAndEndCords.first;
-	color = sf::Color::Red;
+	color = sf::Color::Magenta;
 	shape.setFillColor(color);
 }
 
@@ -169,10 +175,12 @@ bool BaseRobot::move(int deltaTime)
 		return moveWest(deltaTime);
 		break;
 	}
+	return false;
 }
 
-void BaseRobot::randomMovement(Grid grid, int deltaTime)
+void BaseRobot::movement(Grid grid, int deltaTime)
 {	
+	
 	if (!moving)
 	{
 		updateAccesiblity(grid);
@@ -195,3 +203,6 @@ void BaseRobot::draw(sf::RenderWindow* window)
 {
 	window->draw(shape);
 }
+
+
+
