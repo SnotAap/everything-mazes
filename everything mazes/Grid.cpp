@@ -6,7 +6,7 @@ Grid::Grid(int sizeX_, int sizeY_)
 	sizeY = sizeY_;
 }
 
-void Grid::setup(std::vector<std::shared_ptr<Object>>& renderList, std::vector<cordinates>& expressedwallMap)
+void Grid::setup(std::vector<std::shared_ptr<Object>>& renderList)
 {
 	int tileSizeX = int(floor(1920 / (sizeX + 4)));
 	int tilesSizeY = int(floor(1080 / (sizeY + 4)));
@@ -51,7 +51,9 @@ void Grid::setup(std::vector<std::shared_ptr<Object>>& renderList, std::vector<c
 
 		}
 	}
-
+	//
+	std::vector<cordinates> expressedwallMap;
+	//
 	for (int x = 0; x < sizeX; x++)
 	{
 		for (int y = 0; y < sizeY; y++)
@@ -95,16 +97,25 @@ void Grid::setup(std::vector<std::shared_ptr<Object>>& renderList, std::vector<c
 			}
 		}
 	}
+
+	for (int i = 0; i < expressedwallMap.size(); i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			renderList.emplace_back(wallMap[expressedwallMap[i]][j]);
+		}
+	}
 }
 
-std::pair<cordinates, cordinates> Grid::recursiveBacktrackingMaze(std::vector<std::shared_ptr<Object>>& renderList, unsigned int deltaTime)
+void Grid::recursiveBacktrackingMaze()
 {
 	std::list<cordinates> exploredTiles;
 	//
 	int yOpening = rand() % sizeY;
 	cordinates opening = std::pair<int, int>(std::make_pair(0, yOpening));
 	tileMap[opening]->visited = true;
-	wallMap[opening][West]->active = false;
+	std::pair<cordinates, int> removedStartWall = std::make_pair(opening, West);
+	removedWallsOrderd.emplace_back(removedStartWall);
 	exploredTiles.emplace_back(opening);
 	std::list<cordinates>::iterator currentTile;
 	currentTile = exploredTiles.begin();
@@ -135,7 +146,8 @@ std::pair<cordinates, cordinates> Grid::recursiveBacktrackingMaze(std::vector<st
 			{
 				if (nextPath.second >= 0 && nextPath.second < sizeY)
 				{
-					wallMap[*currentTile][possibleDirections[move]]->active = false;
+					std::pair<cordinates, int> removedWall = std::make_pair(*currentTile, possibleDirections[move]);
+					removedWallsOrderd.emplace_back(removedWall);
 					tileMap[nextPath]->visited = true;
 					if (*currentTile == exploredTiles.back())
 					{
@@ -164,8 +176,9 @@ std::pair<cordinates, cordinates> Grid::recursiveBacktrackingMaze(std::vector<st
 	}
 	int yOpeningEnd = rand() % sizeY;
 	cordinates openingEnd = std::pair<int, int>(std::make_pair(sizeX - 1, yOpeningEnd));
-	wallMap[openingEnd][East]->active = false;
-	return std::pair<cordinates, cordinates>(std::make_pair(opening, openingEnd));
+	std::pair<cordinates, int> removedEndWall = std::make_pair(openingEnd, East);
+	removedWallsOrderd.emplace_back(removedEndWall);
+	startAndEndCords = std::pair<cordinates, cordinates>(std::make_pair(opening, openingEnd));
 }
 
 class MazeNode
@@ -205,7 +218,7 @@ public:
 	}
 };
 
-std::pair<cordinates, cordinates> Grid::primsMaze(std::vector<std::shared_ptr<Object>>& renderList, unsigned int deltaTime)
+void Grid::primsMaze()
 {
 	std::vector<cordinates> maze;
 	std::vector<cordinates> frontier;
@@ -304,16 +317,42 @@ std::pair<cordinates, cordinates> Grid::primsMaze(std::vector<std::shared_ptr<Ob
 		nodeMap[frontier[randFront]]->partOfMaze = true;
 		maze.emplace_back(frontier[randFront]);
 
-		wallMap[frontier[randFront]][nodeMap[adjecentMazeTiles[randAdjecentMazeTile]]->getSide(nodeMap[frontier[randFront]])]->active = false;
+		std::pair<cordinates, int> removedWall = std::make_pair(frontier[randFront], nodeMap[adjecentMazeTiles[randAdjecentMazeTile]]->getSide(nodeMap[frontier[randFront]]));
+		removedWallsOrderd.emplace_back(removedWall);
 		frontier.erase(frontier.begin() + randFront);
 		//
 		count++;
 	}
 	int yOpening = rand() % sizeY;
 	cordinates opening = std::pair<int, int>(std::make_pair(0, yOpening));
-	wallMap[opening][West]->active = false;
+	std::pair<cordinates, int> removedStartWall = std::make_pair(opening, West);
+	removedWallsOrderd.emplace_back(removedStartWall);
+
+
 	int yOpeningEnd = rand() % sizeY;
 	cordinates openingEnd = std::pair<int, int>(std::make_pair(sizeX - 1, yOpeningEnd));
-	wallMap[openingEnd][East]->active = false;
-	return std::pair<cordinates, cordinates>(std::make_pair(opening, openingEnd));
+	std::pair<cordinates, int> removedEndWall = std::make_pair(openingEnd, East);
+	removedWallsOrderd.emplace_back(removedEndWall);
+	startAndEndCords = std::pair<cordinates, cordinates>(std::make_pair(opening, openingEnd));
+}
+
+bool Grid::removeWalls(int deltaTime)
+{
+	if (wallRemoveItorater < removedWallsOrderd.size())
+	{
+		timer -= deltaTime;
+		if (timer <= 0)
+		{
+
+			wallMap[removedWallsOrderd[wallRemoveItorater].first][removedWallsOrderd[wallRemoveItorater].second]->active = false;
+			wallRemoveItorater++;
+			timer = timerTime;
+
+		}
+		return false;
+	}
+	else
+	{
+		return true;
+	}
 }
