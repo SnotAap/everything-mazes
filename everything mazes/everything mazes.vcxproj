@@ -149,6 +149,7 @@
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="PathFinding.cpp" />
     <ClCompile Include="Robot.cpp" />
+    <ClCompile Include="Robot0.cpp" />
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="Wall.cpp" />
   </ItemGroup>
@@ -160,7 +161,7 @@
     <ClInclude Include="Object.h" />
     <ClInclude Include="PathFinding.h" />
     <ClInclude Include="Robot.h" />
-    <ClInclude Include="Structs.h" />
+    <ClInclude Include="Robot0.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="Wall.h" />
   </ItemGroup>

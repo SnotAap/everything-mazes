@@ -29,8 +29,11 @@ int main()
     grid.recursiveBacktrackingMaze();
     //grid.primsMaze();
 
-    std::shared_ptr<BaseRobot> robot = std::make_shared<BaseRobot>(grid);
-    renderList.emplace_back(robot);
+
+    std::shared_ptr<BaseRobot> robot0 = std::make_shared<BaseRobot>(grid);
+    renderList.emplace_back(robot0);
+    std::shared_ptr<Robot0> robot1 = std::make_shared<Robot0>(grid);
+    renderList.emplace_back(robot1);
 
     while (window.isOpen())
     {
@@ -55,11 +58,15 @@ int main()
             }
             break;
         case solveState:
-            robot->randomMovement(grid, deltaTime);
-            std::cout <<robot->gridPos.first << ", " << robot->gridPos.second << " " << robot->position.x << ", " << robot->position.y << std::endl;
-            if (robot->gridPos == grid.startAndEndCords.second)
+            
+            if (robot0->gridPos != grid.startAndEndCords.second)
             {
-                state++;
+                robot0->movement(grid, deltaTime);
+            }
+            
+            if (robot1->gridPos != grid.startAndEndCords.second)
+            {
+                robot1->movement(grid, deltaTime);
             }
             break;
         case solvedState:
