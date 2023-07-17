@@ -21,7 +21,6 @@
 #include "CustomTypes.h"
 #include "Structs.h"
 #include "Tile.h"
-//#include "GridSetup.h"
 #include "Grid.h"
 #include "PathFinding.h"
 #include "Robot.h"
