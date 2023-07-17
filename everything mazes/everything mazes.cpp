@@ -2,13 +2,14 @@
 
 std::vector<std::shared_ptr<Object>> renderList;
 std::vector<cordinates> expressedwallMap;
-std::pair<cordinates, cordinates> startAndEndCords;
+
 std::vector<cordinates> path;
 int sizeX = 20;
 int sizeY = 20;
 
 #define generateState 0
 #define solveState 1
+#define solvedState 2
 int state = 0;
 
 unsigned long currentTime;
@@ -20,20 +21,17 @@ int main()
     lastTime = timeGetTime();
     srand((unsigned int)timeGetTime());
     Grid grid(sizeX, sizeY);
-    grid.setup(renderList, expressedwallMap);
+    grid.setup(renderList);
+    
 
     sf::RenderWindow window(sf::VideoMode(1920, 1080), "Mazes!");
 
-    startAndEndCords = grid.recursiveBacktrackingMaze(renderList, deltaTime);
-    //startAndEndCords = grid.primsMaze(renderList, deltaTime);
+    grid.recursiveBacktrackingMaze();
+    //grid.primsMaze();
 
-    for (int i = 0; i < expressedwallMap.size(); i++)
-    {
-        for (int j = 0; j < 4; j++)
-        {
-                renderList.emplace_back(grid.wallMap[expressedwallMap[i]][j]);
-        }   
-    } 
+    std::shared_ptr<BaseRobot> robot = std::make_shared<BaseRobot>(grid);
+    renderList.emplace_back(robot);
+
     while (window.isOpen())
     {
         sf::Event event;
@@ -46,6 +44,30 @@ int main()
         //
         currentTime = timeGetTime();
         deltaTime = currentTime - lastTime;
+
+        //
+        switch (state)
+        {
+        case generateState:
+            if (grid.removeWalls(deltaTime))
+            {
+                state++;
+            }
+            break;
+        case solveState:
+            robot->randomMovement(grid, deltaTime);
+            std::cout <<robot->gridPos.first << ", " << robot->gridPos.second << " " << robot->position.x << ", " << robot->position.y << std::endl;
+            if (robot->gridPos == grid.startAndEndCords.second)
+            {
+                state++;
+            }
+            break;
+        case solvedState:
+
+            break;
+
+
+        }
         //
         for (int i = 0; i < renderList.size(); i++)
         {
