@@ -202,6 +202,7 @@ std::pair<cordinates, cordinates> primsMaze(int sizeX, int sizeY, std::map<cordi
 	std::vector<cordinates> maze;
 	std::vector<cordinates> frontier;
 	std::map<cordinates, std::shared_ptr<MazeNode>> nodeMap;
+	
 	//initializing nodes.
 	for (int x = 0; x < sizeX; x++)
 	{
@@ -256,7 +257,7 @@ std::pair<cordinates, cordinates> primsMaze(int sizeX, int sizeY, std::map<cordi
 	int randY = rand() % sizeY;
 	cordinates randStartCord = std::pair<int, int>(std::make_pair(randX, randY));
 	maze.emplace_back(randStartCord);
-	nodeMap[maze[0]]->partOfMaze = true;
+	nodeMap[maze[0]]->partOfMaze = true;    
 	//
 	int count = 0;
 	//
@@ -300,12 +301,116 @@ std::pair<cordinates, cordinates> primsMaze(int sizeX, int sizeY, std::map<cordi
 		frontier.erase(frontier.begin() + randFront);
 		//
 		count++;
-	}
+		
+	}	
 	int yOpening = rand() % sizeY;
 	cordinates opening = std::pair<int, int>(std::make_pair(0, yOpening));
 	wallMap[opening][West]->active = false;
 	int yOpeningEnd = rand() % sizeY;
 	cordinates openingEnd = std::pair<int, int>(std::make_pair(sizeX - 1, yOpeningEnd));
 	wallMap[openingEnd][East]->active = false;
+	return std::pair<cordinates, cordinates>(std::make_pair(opening, openingEnd));
+}
+
+std::pair<cordinates, cordinates> kruskalsMaze(int sizeX, int sizeY, std::map<cordinates, walls>& wallMap, std::map<cordinates, std::shared_ptr<Tile>>& tileMap)
+{
+	std::list<cordinates> startingtiles;
+	std::map<cordinates, std::shared_ptr<MazeNode>> nMap;
+
+	int rX = rand() % sizeX;
+	int rY = rand() % sizeY;
+	cordinates rStartCord = std::pair<int, int>(std::make_pair(rX, rY));
+	tileMap[rStartCord]->mainpath = true;
+	tileMap[rStartCord]->shape.setFillColor(sf::Color::Red);
+
+	int yOpening = rand() % sizeY;
+	cordinates openingEnd = std::pair<int, int>(std::make_pair(sizeX - 1, rY));
+	wallMap[openingEnd][East]->active = false;
+	cordinates opening = std::pair<int, int>(std::make_pair(0, yOpening));
+	wallMap[opening][West]->active = false;
+
+	for (int i = 0; i < tileMap.size() -1; i++)
+	{		
+		cordinates pickedTile = std::pair<int, int>(std::make_pair(rand() % sizeX, rand() % sizeY));
+		if (tileMap[pickedTile]->mainpath == true) 
+		{			
+			while (tileMap[pickedTile]->mainpath == true)
+			{
+				pickedTile = std::pair<int, int>(std::make_pair(rand() % sizeX, rand() % sizeY));
+			}			
+		}
+
+		int randW = 2;
+		//tiles die aangrensend zijn groeperen en een beter stop punt voor de for-loop maken
+		
+		if (tileMap[pickedTile]->gridPos.first == 0)
+		{			
+			if (tileMap[pickedTile]->gridPos.second == 0)
+			{
+				randW = ((rand() % 2) + 1);				
+			}
+			else if (tileMap[pickedTile]->gridPos.second == 19)
+			{
+				randW = rand() % 2;				
+			}			
+			else if (tileMap[pickedTile]->gridPos.second > 0 && tileMap[pickedTile]->gridPos.second < 19)
+			{
+				randW = rand() % 3;				
+			}
+		}
+		else if (tileMap[pickedTile]->gridPos.second == 0)
+		{
+			if (tileMap[pickedTile]->gridPos.first > 0 && tileMap[pickedTile]->gridPos.first < 19)
+			{
+				randW = ((rand() % 3) + 1);				
+			}
+			else if (tileMap[pickedTile]->gridPos.first == 19)
+			{
+				randW = ((rand() % 2) + 2);				;
+			}
+		}
+		else if (tileMap[pickedTile]->gridPos.second == 19)
+		{
+			if (tileMap[pickedTile]->gridPos.first > 0 && tileMap[pickedTile]->gridPos.first < 19)
+			{
+				while (randW == 2) {
+					randW = rand() % 4;
+				}							
+			}
+			else if (tileMap[pickedTile]->gridPos.first == 19)
+			{
+				while (randW == 2 || randW == 1)
+				{
+					randW = rand() % 4;
+				}
+			}
+		}
+		else if (tileMap[pickedTile]->gridPos.first == 19)
+		{
+			if (tileMap[pickedTile]->gridPos.second > 0 && tileMap[pickedTile]->gridPos.second < 19)
+			{
+				randW = rand() % 4;
+				while (randW == 1)
+				{
+					randW = rand() % 4;					
+				}
+			}			
+		}
+		else
+		{
+			randW = rand() % 4;
+		}		
+		
+		if (tileMap[pickedTile]->neighbors[randW]->mainpath == true)
+		{
+			wallMap[pickedTile][randW]->active = false;
+			tileMap[pickedTile]->mainpath = true;
+		}
+		else
+		{
+			wallMap[pickedTile][randW]->active = false;
+		}
+		
+	}
 	return std::pair<cordinates, cordinates>(std::make_pair(opening, openingEnd));
 }

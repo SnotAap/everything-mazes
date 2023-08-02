@@ -10,6 +10,7 @@ public:
 	sf::RectangleShape shape;
 	walls walls;
 	bool visited = false;
+	bool mainpath = false;
 	std::shared_ptr<Tile> neighbors[4];
 	//
 	Tile(float xPos_, float yPos_, cordinates gridPos_, float xSize_, float ySize_, sf::Color color_, float rotation_);

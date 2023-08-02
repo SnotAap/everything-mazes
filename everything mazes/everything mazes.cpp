@@ -17,8 +17,9 @@ int main()
 
     sf::RenderWindow window(sf::VideoMode(1920, 1080), "Mazes!");
     gridSetup(sizeX, sizeY, renderList, tileMap, wallMap, expressedwallMap);
-    startAndEndCords = recursiveBacktrackingMaze(sizeX, sizeY, wallMap, tileMap);
+    //startAndEndCords = recursiveBacktrackingMaze(sizeX, sizeY, wallMap, tileMap);
     //startAndEndCords = primsMaze(sizeX, sizeY, wallMap, tileMap);
+    startAndEndCords = kruskalsMaze(sizeX, sizeY, wallMap, tileMap);
     
     for (int i = 0; i < expressedwallMap.size(); i++)
     {
@@ -32,7 +33,7 @@ int main()
     } 
 
     while (window.isOpen())
-    {
+    {        
         sf::Event event;
         while (window.pollEvent(event))
         {
