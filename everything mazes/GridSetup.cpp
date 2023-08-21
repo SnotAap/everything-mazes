@@ -301,7 +301,7 @@ std::pair<cordinates, cordinates> primsMaze(int sizeX, int sizeY, std::map<cordi
 		frontier.erase(frontier.begin() + randFront);
 		//
 		count++;
-		
+
 	}	
 	int yOpening = rand() % sizeY;
 	cordinates opening = std::pair<int, int>(std::make_pair(0, yOpening));
@@ -318,10 +318,18 @@ std::pair<cordinates, cordinates> kruskalsMaze(int sizeX, int sizeY, std::map<co
 	std::map<cordinates, std::shared_ptr<MazeNode>> nMap;
 
 	int rX = rand() % sizeX;
-	int rY = rand() % sizeY;
+	int rY = rand() % sizeY;	
 	cordinates rStartCord = std::pair<int, int>(std::make_pair(rX, rY));
-	tileMap[rStartCord]->mainpath = true;
-	tileMap[rStartCord]->shape.setFillColor(sf::Color::Red);
+	tileMap[rStartCord]->inList = true;
+	tileMap[rStartCord]->shape.setFillColor(sf::Color::Red);	
+
+	std::list<std::list<std::shared_ptr<Tile>>> mainlist;
+	std::list <std::list<std::shared_ptr<Tile>>> ::iterator basedTile;
+	basedTile = mainlist.begin();
+
+	std::list<std::shared_ptr<Tile>> pathList;
+	pathList.push_front(tileMap[rStartCord]);
+	mainlist.push_front(pathList);
 
 	int yOpening = rand() % sizeY;
 	cordinates openingEnd = std::pair<int, int>(std::make_pair(sizeX - 1, rY));
@@ -329,16 +337,16 @@ std::pair<cordinates, cordinates> kruskalsMaze(int sizeX, int sizeY, std::map<co
 	cordinates opening = std::pair<int, int>(std::make_pair(0, yOpening));
 	wallMap[opening][West]->active = false;
 
-	for (int i = 0; i < tileMap.size() -1; i++)
+	for (int i = 0; i < 50; i++)
 	{		
 		cordinates pickedTile = std::pair<int, int>(std::make_pair(rand() % sizeX, rand() % sizeY));
-		if (tileMap[pickedTile]->mainpath == true) 
+		/*if (tileMap[pickedTile]->inList == true)
 		{			
-			while (tileMap[pickedTile]->mainpath == true)
+			while (tileMap[pickedTile]->inList == true)
 			{
 				pickedTile = std::pair<int, int>(std::make_pair(rand() % sizeX, rand() % sizeY));
 			}			
-		}
+		}*/
 
 		int randW = 2;
 		//tiles die aangrensend zijn groeperen en een beter stop punt voor de for-loop maken
@@ -401,16 +409,72 @@ std::pair<cordinates, cordinates> kruskalsMaze(int sizeX, int sizeY, std::map<co
 			randW = rand() % 4;
 		}		
 		
-		if (tileMap[pickedTile]->neighbors[randW]->mainpath == true)
+		/*pickedTile-> inList == true && neighbors-> inList == true
+		*merge lists
+		* remove wall*/
+
+		/*pickedTile-> inList == true && neighbors-> inList == fasle	
+		* add neighbor to list	
+		* remove wall*/
+
+		/*pickedTile-> inList == false && neighbors-> inList == true
+		* add pickedTile to list
+		* remove wall*/		
+
+		/*pickedTile-> inList == false && neighbors-> inList == false
+		* creat list and add both
+		* remove wall*/
+		
+
+		/*if (tileMap[pickedTile]->neighbors[randW]->listtileMap[pickedTile]->neighbors[randW]->inList == true)
 		{
 			wallMap[pickedTile][randW]->active = false;
-			tileMap[pickedTile]->mainpath = true;
+			//tileMap[pickedTile]->mainpath = true;
+			//mainlist.push_back(tileMap[pickedTile]);
 		}
 		else
 		{
 			wallMap[pickedTile][randW]->active = false;
+		}*/
+
+		if (tileMap[pickedTile]->inList == true)
+		{
+			
+			if (tileMap[pickedTile]->neighbors[randW]->inList == true)
+			{
+				//merge lists
+				wallMap[pickedTile][randW]->active = false;
+			}
+			else
+			{
+				//add to list
+				tileMap[pickedTile]->inList = true;
+				wallMap[pickedTile][randW]->active = false;
+			}
+
 		}
-		
-	}
+		else
+		{
+			
+			if (tileMap[pickedTile]->neighbors[randW]->inList == true)
+			{
+				//join list
+
+				tileMap[pickedTile]->inList = true;
+				wallMap[pickedTile][randW]->active = false;
+
+			}
+			else
+			{
+				//make list
+				std::list<std::shared_ptr<Tile>> myList;
+				myList.push_back(tileMap[pickedTile]);
+				myList.push_back(tileMap[pickedTile]->neighbors[randW]);
+				tileMap[pickedTile]->inList = true;
+				tileMap[pickedTile]->neighbors[randW]->inList = true;
+				wallMap[pickedTile][randW]->active = false;
+			}
+		}		
+	}	
 	return std::pair<cordinates, cordinates>(std::make_pair(opening, openingEnd));
 }
