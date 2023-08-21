@@ -14,5 +14,8 @@ Wall::Wall(float xPos_, float yPos_, float xSize_, float ySize_, float rotation_
 
 void Wall::draw(sf::RenderWindow* window)
 {
-	window->draw(shape);
+	if (active)
+	{
+		window->draw(shape);
+	}	
 }

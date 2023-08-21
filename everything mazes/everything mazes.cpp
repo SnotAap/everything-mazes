@@ -1,39 +1,42 @@
 #include "Header.h"
 
 std::vector<std::shared_ptr<Object>> renderList;
-std::map<cordinates, walls> wallMap;
-std::map<cordinates, std::shared_ptr<Tile>> tileMap;
 std::vector<cordinates> expressedwallMap;
-std::pair<cordinates, cordinates> startAndEndCords;
+
 std::vector<cordinates> path;
 int sizeX = 20;
 int sizeY = 20;
 
+#define generateState 0
+#define solveState 1
+#define solvedState 2
+int state = 0;
+
+unsigned long currentTime;
+unsigned long lastTime;
+unsigned int deltaTime;
 
 int main()
 {
-
-    srand(unsigned int(time(NULL)));
+    lastTime = timeGetTime();
+    srand((unsigned int)timeGetTime());
+    Grid grid(sizeX, sizeY);
+    grid.setup(renderList);
+    
 
     sf::RenderWindow window(sf::VideoMode(1920, 1080), "Mazes!");
-    gridSetup(sizeX, sizeY, renderList, tileMap, wallMap, expressedwallMap);
-    //startAndEndCords = recursiveBacktrackingMaze(sizeX, sizeY, wallMap, tileMap);
-    //startAndEndCords = primsMaze(sizeX, sizeY, wallMap, tileMap);
-    startAndEndCords = kruskalsMaze(sizeX, sizeY, wallMap, tileMap);
-    
-    for (int i = 0; i < expressedwallMap.size(); i++)
-    {
-        for (int j = 0; j < 4; j++)
-        {
-            if (wallMap[expressedwallMap[i]][j]->active)
-            {
-                renderList.emplace_back(wallMap[expressedwallMap[i]][j]);
-            }
-        }   
-    } 
+
+    grid.recursiveBacktrackingMaze();
+    //grid.primsMaze();
+
+
+    std::shared_ptr<BaseRobot> robot0 = std::make_shared<BaseRobot>(grid);
+    renderList.emplace_back(robot0);
+    std::shared_ptr<Robot0> robot1 = std::make_shared<Robot0>(grid);
+    renderList.emplace_back(robot1);
 
     while (window.isOpen())
-    {        
+    {
         sf::Event event;
         while (window.pollEvent(event))
         {
@@ -42,13 +45,44 @@ int main()
         }        
         window.clear(sf::Color::White);
         //
-        
+        currentTime = timeGetTime();
+        deltaTime = currentTime - lastTime;
+
+        //
+        switch (state)
+        {
+        case generateState:
+            if (grid.removeWalls(deltaTime))
+            {
+                state++;
+            }
+            break;
+        case solveState:
+            
+            if (robot0->gridPos != grid.startAndEndCords.second)
+            {
+                robot0->movement(grid, deltaTime);
+            }
+            
+            if (robot1->gridPos != grid.startAndEndCords.second)
+            {
+                robot1->movement(grid, deltaTime);
+            }
+            break;
+        case solvedState:
+
+            break;
+
+
+        }
+        //
         for (int i = 0; i < renderList.size(); i++)
         {
             renderList[i]->draw(&window);
         }
         //
         window.display();
+        lastTime = currentTime;
     }
     return 0;
 }
