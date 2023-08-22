@@ -117,7 +117,11 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
 <<<<<<< HEAD
+<<<<<<< HEAD
       <AdditionalIncludeDirectories>C:\Game_Coding\VS Libaries\SFML-2.6.0\include</AdditionalIncludeDirectories>
+=======
+      <AdditionalIncludeDirectories>..\..\SFML\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+>>>>>>> parent of bff2ff1 (added a neccesary file)
 =======
       <AdditionalIncludeDirectories>..\..\SFML\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
 >>>>>>> parent of bff2ff1 (added a neccesary file)
@@ -126,7 +130,11 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
 <<<<<<< HEAD
+<<<<<<< HEAD
       <AdditionalLibraryDirectories>C:\Game_Coding\VS Libaries\SFML-2.6.0\lib</AdditionalLibraryDirectories>
+=======
+      <AdditionalLibraryDirectories>..\..\SFML\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+>>>>>>> parent of bff2ff1 (added a neccesary file)
 =======
       <AdditionalLibraryDirectories>..\..\SFML\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 >>>>>>> parent of bff2ff1 (added a neccesary file)
@@ -142,7 +150,10 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
 <<<<<<< HEAD
+<<<<<<< HEAD
       <AdditionalIncludeDirectories>C:\Game_Coding\VS Libaries\SFML-2.6.0\include</AdditionalIncludeDirectories>
+=======
+>>>>>>> parent of bff2ff1 (added a neccesary file)
 =======
 >>>>>>> parent of bff2ff1 (added a neccesary file)
     </ClCompile>
@@ -152,7 +163,10 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
 <<<<<<< HEAD
+<<<<<<< HEAD
       <AdditionalLibraryDirectories>C:\Game_Coding\VS Libaries\SFML-2.6.0\lib</AdditionalLibraryDirectories>
+=======
+>>>>>>> parent of bff2ff1 (added a neccesary file)
 =======
 >>>>>>> parent of bff2ff1 (added a neccesary file)
     </Link>
