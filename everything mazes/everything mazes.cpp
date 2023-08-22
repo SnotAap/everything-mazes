@@ -16,6 +16,8 @@ unsigned long currentTime;
 unsigned long lastTime;
 unsigned int deltaTime;
 
+//hoihoi hoop dat je properties nu zijn gefixed
+
 int main()
 {
     lastTime = timeGetTime();
