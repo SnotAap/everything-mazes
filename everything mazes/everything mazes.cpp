@@ -9,6 +9,17 @@ std::vector<cordinates> path;
 int sizeX = 20;
 int sizeY = 20;
 
+<<<<<<< HEAD
+=======
+#define generateState 0
+#define solveState 1
+#define solvedState 2
+int state = 0;
+
+unsigned long currentTime;
+unsigned long lastTime;
+unsigned int deltaTime;
+>>>>>>> parent of 98d7e2f (added a comment to fix your properties)
 
 int main()
 {
